@@ -1,2 +1,0 @@
-# buyfelishasbundles
-mini shop tt
