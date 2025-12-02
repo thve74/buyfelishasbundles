@@ -4,80 +4,672 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BuyFelishasBundles — Mystery & Hygiene Bundles</title>
+  <!-- SEO / Social -->
   <meta name="description" content="Curated home & personal‑care bundles packed with love. Fast shipping. Subscribe & Save 5%." />
+  <meta property="og:title" content="BuyFelishasBundles — Mystery & Hygiene Bundles" />
+  <meta property="og:description" content="Curated home & personal‑care bundles, packed with love. Fast shipping. Subscribe & Save 5%." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://placehold.co/1200x630/2563eb/ffffff?text=BuyFelishasBundles" />
+  <meta property="og:url" content="" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232563eb'/%3E%3Ctext x='32' y='40' font-size='28' text-anchor='middle' fill='white' font-family='Inter,Arial'%3EBFB%3C/text%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#2563eb" />
+
+  <!-- Tailwind + Font -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- App ID + Firebase config (optional; falls back to OFFLINE cleanly) -->
+  <script>
+    window.__app_id = 'buyfelishasbundles-2';
+    window.__firebase_config = JSON.stringify({
+      apiKey: "AIzaSyASpds44VB_ffn4Mzvu7_ikT2pBliI4Idg",
+      authDomain: "bfb-live.firebaseapp.com",
+      projectId: "bfb-live",
+      storageBucket: "bfb-live.appspot.com",
+      messagingSenderId: "531179137016",
+      appId: "1:531179137016:web:f3b95a9eb7959ddc2b180d",
+      measurementId: "G-0CRFVBME29"
+    });
+  </script>
+
   <style>
-    :root{--blue:#3b82f6;--ink:#1f2937;--bg:#f9fafb}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink)}
+    :root{
+      --color-primary-blue:#3b82f6; --color-accent-green:#10b981; --color-price-red:#ef4444;
+      --color-bg-light:#f9fafb; --color-text-dark:#1f2937;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--color-bg-light);color:var(--color-text-dark);min-height:100vh}
     .shadow-soft{box-shadow:0 4px 12px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s}
     .shadow-soft:hover{box-shadow:0 8px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
-    .btn{display:inline-block;padding:.75rem 1.25rem;border-radius:9999px;font-weight:700}
+    .modal{display:none;position:fixed;z-index:100;inset:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(5px)}
+    .modal-content{background:#fff;margin:10% auto;padding:24px;border-radius:16px;width:90%;max-width:500px;animation:slideIn .3s ease-out;max-height:90vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+    @media (max-width:640px){.modal-content{margin:5% auto;width:95%}}
+    .modal-body{overflow-y:auto;max-height:64vh;padding-right:6px}
+    .modal-gradient-top,.modal-gradient-bottom{position:absolute;left:0;right:0;height:22px;pointer-events:none}
+    .modal-gradient-top{top:56px;background:linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0))}
+    .modal-gradient-bottom{bottom:72px;background:linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0))}
+    .modal-scrollbar{position:absolute;right:10px;bottom:14px;display:flex;gap:8px;z-index:5}
+    .modal-scrollbar button{background:#111827;color:#fff;border-radius:9999px;padding:8px 10px;font-size:12px;opacity:.9}
+    .modal-scrollbar button:hover{opacity:1}
+    @keyframes slideIn{from{transform:translateY(-50px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .close-btn{color:#aaa;float:right;font-size:28px;font-weight:700;transition:color .2s}
+    .close-btn:hover,.close-btn:focus{color:#333;cursor:pointer}
+    #cart-floating-btn{position:fixed;bottom:20px;right:20px;width:60px;height:60px;background:var(--color-primary-blue);color:#fff;border-radius:9999px;display:none;align-items:center;justify-content:center;font-size:20px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:50;cursor:pointer;transition:background .2s,transform .2s}
+    #cart-floating-btn:hover{background:#2563eb;transform:scale(1.05)}
+    .img-placeholder{background:#e5e7eb;color:#9ca3af;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600}
+    .input-field{padding:10px;border:1px solid #d1d5db;border-radius:8px;width:100%;transition:border-color .2s;font-size:16px}
+    .input-field:focus{border-color:#3b82f6;outline:none;box-shadow:0 0 0 2px rgba(59,130,246,.2)}
+    .checkout-btn-disabled{opacity:.7;pointer-events:none;background:#9ca3af!important}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600}
   </style>
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "BuyFelishasBundles — Laundry & Home Bundles",
+    "aggregateRating": {"@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "10"}
+  }</script>
 </head>
 <body class="antialiased">
-  <header class="bg-white shadow-md mb-8 py-8">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <img src="buyfelishasbundles-logo.png" class="w-40 mx-auto mb-2" alt="BuyFelishasBundles logo"/>
-      <h1 class="text-3xl font-extrabold">BuyFelishasBundles</h1>
-      <p class="text-gray-500 mt-2">Curated home & personal-care bundles, packed with love. <b>$12 shipping per bundle.</b></p>
+
+  <!-- In-App Browser Warning (TikTok/IG/FB) -->
+  <div id="iab-warning" class="hidden sticky top-0 z-[120] bg-amber-50 text-amber-900 border-b border-amber-200 px-4 py-2 text-sm">
+    <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
+      <span>⚠️ You’re viewing inside an app browser. For faster checkout, <strong>open in your regular browser</strong>.</span>
+      <div class="flex items-center gap-2">
+        <button id="iab-open-btn" class="px-3 py-1 rounded bg-amber-600 text-white">Open</button>
+        <button id="iab-copy-btn" class="px-3 py-1 rounded bg-white border">Copy Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Cart Button -->
+  <button id="cart-floating-btn" onclick="openCheckoutModal()">
+    <span id="cart-item-count">0</span>
+    <svg class="w-6 h-6 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+  </button>
+
+  <!-- Checkout Modal -->
+  <div id="checkout-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-gradient-top"></div>
+      <div class="modal-gradient-bottom"></div>
+      <div class="modal-scrollbar">
+        <button id="modal-scroll-up">▲</button>
+        <button id="modal-scroll-down">▼</button>
+      </div>
+      <span class="close-btn" onclick="closeCheckoutModal()">&times;</span>
+
+      <div id="checkout-modal-body" class="modal-body">
+        <h2 class="text-3xl font-bold mb-2 text-gray-800">Your Order</h2>
+
+        <div class="text-sm font-semibold text-gray-600 mb-4 bg-gray-100 p-2 rounded-lg space-y-1">
+          <div class="flex justify-between items-center">
+            <span>Order ID:</span>
+            <span id="order-id-display" class="text-blue-600 text-lg font-extrabold tracking-wider">Loading...</span>
+          </div>
+          <div class="flex justify-between items-center border-t border-gray-200 pt-1">
+            <span>User ID (Support):</span>
+            <span id="user-id-display" class="text-xs text-gray-500 break-all">Authenticating...</span>
+          </div>
+        </div>
+
+        <div id="cart-items-list" class="border-b pb-4 mb-4"></div>
+
+        <h3 class="text-xl font-semibold mb-3 text-gray-800 border-t pt-4">Shipping Information</h3>
+        <form id="shipping-form" oninput="validateForm()">
+          <div class="space-y-3 mb-6">
+            <input type="text" id="shipping-name" class="input-field" placeholder="Full Name (for delivery)" required>
+            <input type="email" id="shipping-email" class="input-field" placeholder="Email Address (for tracking)" required>
+            <input type="tel" id="shipping-phone" class="input-field" placeholder="Phone (optional for SMS updates)">
+            <input type="text" id="shipping-address1" class="input-field" placeholder="Street Address" required>
+            <div class="flex space-x-3">
+              <input type="text" id="shipping-city" class="input-field w-1/2" placeholder="City" required>
+              <input type="text" id="shipping-state" class="input-field w-1/4" placeholder="State" maxlength="2" required>
+              <input type="text" id="shipping-zip" class="input-field w-1/4" placeholder="ZIP" maxlength="10" required>
+            </div>
+          </div>
+        </form>
+
+        <div class="mt-3 mb-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+          <label class="flex items-start gap-2">
+            <input type="checkbox" id="agree-norefunds" class="mt-1" />
+            <span>I understand that <strong>all sales are final</strong>, and there are <strong>no refunds once an order is shipped</strong>.
+              <button type="button" id="open-policy-modal" class="underline text-blue-600 hover:text-blue-800 ml-1">View policy</button>
+            </span>
+          </label>
+        </div>
+
+        <div class="space-y-2 mb-3 border-t pt-4">
+          <div class="flex justify-between font-medium text-gray-700"><span>Subtotal (Items):</span><span id="subtotal-amount">$0.00</span></div>
+          <div class="flex justify-between font-medium text-gray-700"><span id="shipping-label">Shipping:</span><span id="shipping-amount">$0.00</span></div>
+          <div class="flex justify-between font-extrabold text-2xl text-red-600 border-t pt-2"><span>FINAL TOTAL:</span><span id="final-total-amount">$0.00</span></div>
+        </div>
+        <div class="flex gap-2 mb-4">
+          <button id="copy-total-btn" class="flex-1 bg-white border text-gray-800 font-semibold py-2 px-3 rounded-lg">Copy total</button>
+          <button id="copy-note-btn" class="flex-1 bg-white border text-gray-800 font-semibold py-2 px-3 rounded-lg">Copy payment note (Order ID + address)</button>
+        </div>
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-3 rounded mb-4 text-sm font-medium">
+          ⚠️ <strong>REMINDER:</strong> The Cash App note will be pre-filled with the <strong>Order ID</strong>, <strong>Email</strong>, and <strong>Shipping Address</strong>. <strong>DO NOT</strong> edit this note before sending!
+        </div>
+
+        <button id="checkout-button" class="checkout-btn-disabled block text-center w-full bg-gray-400 text-white font-bold text-xl py-3 px-8 rounded-full shadow-lg transition duration-150" disabled>
+          Pay with Cash App
+        </button>
+        <div class="mt-2 text-center text-xs text-gray-500">or</div>
+        <button id="crypto-button" onclick="openCryptoPay()" class="checkout-btn-disabled mt-2 block text-center w-full bg-indigo-600 text-white font-bold text-xl py-3 px-8 rounded-full shadow-lg transition duration-150 disabled:opacity-60" disabled>
+          Pay with Crypto (NOWPayments)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Modal (mini) -->
+  <div id="policy-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="policy-modal-close">&times;</span>
+      <h2 class="text-2xl font-bold mb-2">Store Policy</h2>
+      <div class="text-sm text-gray-700 space-y-3">
+        <p><strong>All Sales Final.</strong> We do not offer refunds, returns, or exchanges.</p>
+        <p><strong>No refunds once shipped.</strong> After your package is handed to the carrier, all sales are final.</p>
+        <p><strong>Product Substitution Guarantee.</strong> If a listed item is unavailable, we may substitute with equal or greater value or quantity — you will never receive less than ordered.</p>
+        <p>The full policy is also shown below on this page for your records.</p>
+      </div>
+      <button id="policy-scroll" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg">Scroll to full policy</button>
+    </div>
+  </div>
+
+  <!-- Firebase bootstrap (12.6.0) — optional, auto OFFLINE if not available) -->
+  <script type="module">
+    import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import { getFirestore }    from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    let app = null, db = null, auth = null; let OFFLINE = false;
+    const loading = document.getElementById('loading-indicator');
+    try {
+      const cfg = JSON.parse(window.__firebase_config || '{}');
+      if (!cfg.apiKey) throw new Error('missing config');
+      app  = initializeApp(cfg, 'bfb-live-bootstrap');
+      db   = getFirestore(app);
+      auth = getAuth(app);
+    } catch (e) {
+      console.warn('Firebase bootstrap failed, switching to offline mode:', e);
+      OFFLINE = true;
+    }
+    window.__bfb = { app, db, auth, OFFLINE };
+
+    if (OFFLINE || !auth) {
+      if (loading) { loading.textContent = 'Offline mode — orders save locally. Tracking will email after processing.'; loading.classList.remove('text-blue-500'); loading.classList.add('text-amber-600'); }
+    } else {
+      onAuthStateChanged(auth, async () => {
+        try {
+          if (!auth.currentUser) await signInAnonymously(auth);
+          const u = auth.currentUser;
+          if (u) {
+            const el = document.getElementById('user-id-display');
+            if (el) el.textContent = u.uid;
+            if (loading) { loading.textContent = 'System ready!'; loading.classList.remove('text-blue-500'); loading.classList.add('text-green-500'); }
+          }
+        } catch (e) {
+          console.warn('Auth error, staying offline:', e);
+          if (loading) { loading.textContent = 'Offline mode — orders save locally.'; loading.classList.remove('text-blue-500'); loading.classList.add('text-amber-600'); }
+        }
+      });
+    }
+  </script>
+
+  <!-- Mini DOM helpers for policy modal + modal scroll arrows + IAB banner -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      // Policy modal
+      const open = document.getElementById('open-policy-modal');
+      const modal = document.getElementById('policy-modal');
+      const close = document.getElementById('policy-modal-close');
+      const scrollBtn = document.getElementById('policy-scroll');
+      if (open)  open.addEventListener('click', (e)=>{ e.preventDefault(); if (modal) modal.style.display='block'; });
+      if (close) close.addEventListener('click', ()=>{ if(modal) modal.style.display='none'; });
+      if (scrollBtn) scrollBtn.addEventListener('click', ()=>{
+        if (modal) modal.style.display='none';
+        const el = document.getElementById('full-policy'); if (el) el.scrollIntoView({behavior:'smooth'});
+      });
+      window.addEventListener('click', (e)=>{ if (modal && e.target === modal) modal.style.display='none'; });
+
+      // Modal scroll arrows for checkout body
+      const bodyEl = document.getElementById('checkout-modal-body');
+      const up = document.getElementById('modal-scroll-up');
+      const down = document.getElementById('modal-scroll-down');
+      const scrollByAmt = (dy)=>{ if(bodyEl){ bodyEl.scrollBy({top:dy,behavior:'smooth'}); } };
+      if (up) up.addEventListener('click', ()=>scrollByAmt(-260));
+      if (down) down.addEventListener('click', ()=>scrollByAmt(260));
+
+      // In-app browser banner
+      const iab = /FBAN|FBAV|Instagram|Line\/|Twitter|TikTok/i.test(navigator.userAgent);
+      const bar = document.getElementById('iab-warning');
+      if (iab && bar) bar.classList.remove('hidden');
+      const openBtn = document.getElementById('iab-open-btn');
+      const copyBtn = document.getElementById('iab-copy-btn');
+      if (openBtn) openBtn.addEventListener('click', ()=>{ window.location.href = window.location.href; });
+      if (copyBtn) copyBtn.addEventListener('click', async ()=>{
+        try { await navigator.clipboard.writeText(window.location.href); copyBtn.textContent='Link Copied!'; setTimeout(()=>copyBtn.textContent='Copy Link',1500); } catch {}
+      });
+    });
+  </script>
+
+  <!-- Header -->
+  <header class="bg-white shadow-md mb-8 py-8 md:py-12">
+    <div class="max-w-xl mx-auto px-4 text-center">
+      <img src="buyfelishasbundles-logo.png" alt="BuyFelishasBundles" class="mx-auto mb-3 w-40 h-auto">
+      <h1 id="site-title" class="text-3xl font-extrabold">BuyFelishasBundles</h1>
+      <div class="mt-2 flex items-center justify-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Licensed independent brand</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-50 text-slate-700 border border-slate-200">Not affiliated with TikTok Shop</span>
+      </div>
+      <p class="mt-2 text-gray-500 max-w-lg mx-auto">
+        Curated home & personal-care bundles, packed with love. <strong>$12.00 shipping per bundle.</strong> Click the bag icon to view your order!
+      </p>
+      <div id="loading-indicator" class="mt-4 text-sm text-blue-500 font-semibold">Connecting to payment and order system...</div>
     </div>
   </header>
+
+  <!-- Promo Video (inline when possible; fallback button for app browsers) -->
+  <section id="promo-video" class="max-w-3xl mx-auto px-4 -mt-4 mb-8">
+    <div class="bg-white rounded-2xl shadow-soft border overflow-hidden">
+      <div class="p-4 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-800">Quick Look (60s)</h2>
+        <div class="flex gap-2">
+          <a href="https://photos.app.goo.gl/eQi6ysjfLVT1rZG48" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold">Open Video</a>
+        </div>
+      </div>
+      <div class="relative">
+        <video id="promoVideo" class="w-full max-h-[60vh] bg-black" controls playsinline preload="metadata" poster="bfb-poster.jpg">
+          <source src="https://photos.app.goo.gl/eQi6ysjfLVT1rZG48" type="video/mp4" />
+        </video>
+        <div id="promoFallback" class="p-4 text-sm text-gray-700 hidden">
+          Inline playback isn’t available in this browser. Tap <a class="text-blue-600 underline" href="https://photos.app.goo.gl/eQi6ysjfLVT1rZG48" target="_blank" rel="noopener">Open Video</a> to watch.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function(){
+      // Fallback if Google Photos doesn't play inline
+      const v = document.getElementById('promoVideo');
+      const fb = document.getElementById('promoFallback');
+      if (!v || !fb) return;
+      const showFB = function(){ try{ v.classList.add('hidden'); fb.classList.remove('hidden'); }catch(e){} };
+      const iabUA = /FBAN|FBAV|Instagram|Line\//i.test(navigator.userAgent) || /Twitter|TikTok/i.test(navigator.userAgent);
+      const src = ((v.querySelector('source')?.src || '') + (v.currentSrc || ''));
+      if (iabUA || /photos\.app\.goo\.gl/.test(src)) { showFB(); return; }
+      let fallbackTimer = setTimeout(function(){ if (v.readyState < 2) showFB(); }, 2500);
+      v.addEventListener('loadeddata', function(){ try{ clearTimeout(fallbackTimer); }catch(e){} }, { once:true });
+      v.addEventListener('error', function(){ showFB(); }, { once:true });
+    })();
+  </script>
+
+  <!-- Brand Video Section -->
+  <section id="brand-video-section" class="max-w-3xl mx-auto px-4 -mt-4 mb-6">
+    <div class="bg-white rounded-2xl shadow-soft border overflow-hidden">
+      <div class="p-4 sm:p-5 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-800">🎥 Watch: How BuyFelishasBundles works (0:30)</h2>
+        <button class="hidden sm:inline-block px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-semibold"
+                onclick="(function(){const v=document.getElementById('bfbVideo'); if(v && v.currentSrc){ window.open(v.currentSrc,'_blank'); } else { window.open('bfb-promo.mp4','_blank'); }})();">Open</button>
+      </div>
+      <div class="relative">
+        <video id="bfbVideo" class="w-full h-auto block bg-black" controls playsinline preload="metadata" poster="bfb-poster.jpg">
+          <source src="bfb-promo.mp4" type="video/mp4"/>
+          Your browser doesn’t support HTML5 video. <a href="bfb-promo.mp4" target="_blank" class="underline text-blue-600">Open video</a>.
+        </video>
+      </div>
+      <div class="px-4 py-3 text-xs text-gray-500 border-t">
+        Tip: If video won’t play inside social app browsers, tap “Open” above to watch in your normal browser.
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Tab Bar -->
+  <nav class="sticky top-0 z-[60] bg-white/95 backdrop-blur border-b border-gray-200">
+    <div class="max-w-3xl mx-auto px-4 py-2 flex items-center gap-2">
+      <button class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm font-semibold" onclick="document.getElementById('shop-section')?.scrollIntoView({behavior:'smooth'})">🛍️ Shop</button>
+      <button class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold" onclick="document.getElementById('subscribe-section')?.scrollIntoView({behavior:'smooth'})">🔁 Subscribe & Save 5%</button>
+      <button class="px-3 py-1.5 rounded-lg bg-pink-600 text-white text-sm font-semibold" onclick="scrollToMembership()">✨ Start Membership</button>
+      <button id="owner-open" class="ml-auto px-3 py-1.5 rounded-lg bg-gray-900 text-white text-sm font-semibold">⚙️ Owner</button>
+    </div>
+  </nav>
+  <script>
+    // Smooth scroll + gentle focus for the Start Membership CTA
+    function scrollToMembership(){
+      const sec = document.getElementById('memberships-center');
+      if(!sec){ return; }
+      sec.scrollIntoView({ behavior:'smooth', block:'start' });
+      setTimeout(()=>{
+        try{ document.getElementById('new-membership-btn')?.focus({ preventScroll:true }); }catch(e){}
+      }, 600);
+    }
+  </script>
+
+  <script>
+    // Owner PIN unlock via toolbar button
+    (function(){
+      const btn = document.getElementById('owner-open');
+      if (!btn) return;
+      btn.addEventListener('click', ()=>{
+        const pin = prompt('Enter Owner PIN');
+        if (pin === '3333'){
+          const panel = document.getElementById('admin-panel'); if (panel) panel.classList.remove('hidden');
+          btn.textContent = '✅ Owner'; btn.classList.remove('bg-gray-900'); btn.classList.add('bg-green-700');
+          const m = document.getElementById('owner-memberships'); if (m) m.classList.remove('hidden');
+        } else if (pin){ alert('Incorrect PIN'); }
+      });
+    })();
+  </script>
+
+  <!-- Tracking Center Trigger -->
+  <div class="max-w-3xl mx-auto px-4 mt-2 mb-4">
+    <button id="open-tracking-center" class="w-full md:w-auto px-4 py-2 rounded-lg border bg-white shadow-soft text-sm font-semibold">📦 Track my order</button>
+  </div>
+
+  <!-- Tracking Center Modal -->
+  <div id="tracking-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="document.getElementById('tracking-modal').style.display='none'">&times;</span>
+      <h2 class="text-2xl font-bold mb-2">Order Tracking</h2>
+      <p class="text-sm text-gray-600 mb-4">Enter your <strong>Order ID</strong> (shown at checkout) and the <strong>Email</strong> you used.</p>
+      <div class="space-y-3 mb-4">
+        <input id="track-order-id" class="input-field" placeholder="Order ID (e.g., 251128-142215)" />
+        <input id="track-email" class="input-field" placeholder="Email used at checkout" />
+      </div>
+      <button id="track-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg">Find Status</button>
+      <div id="track-result" class="mt-4 text-sm text-gray-700"></div>
+      <p class="mt-4 text-xs text-gray-500">Shipping provider: <strong>Pirate Ship</strong> (BFB Tracking). Tracking link will be emailed when available.</p>
+    </div>
+  </div>
+
+  <!-- Products + Product Detail Modal (SAFE GUARD for openProductDetails) -->
+  <script>
+    (function(){
+      const PRE_DETAILS = {
+        purex:{
+          title:'Purex Value Fresh Bundle', img:'purex-bundle.jpg',
+          desc:'A smart, affordable cleaning bundle with reliable Purex clean.',
+          items:['Purex Liquid (large)','Home essentials']
+        },
+        tide:{
+          title:'Tide Ultimate Pods Bundle', img:'tide-pods-scott.jpg',
+          desc:'Premium Tide clean for that fresh-pressed feel.',
+          items:['Tide Pods','Bonus essentials']
+        },
+        'tide-scott':{
+          title:'Tide + Scott Mega Household Combo', img:'tide-yellow.jpg',
+          desc:'Laundry + paper goods in one big box.',
+          items:['Tide','Scott Paper Towels','Scott Toilet Paper']
+        },
+        gain:{
+          title:'Gain + Clorox Fresh Bundle', img:'gain-green.jpg',
+          desc:'Fresh Gain scent plus Clorox clean.',
+          items:['Gain','Clorox wipes']
+        },
+        fabuloso:{
+          title:'Fabuloso Six-Scent Mop & Glow Pack', img:'fabuloso-six.jpg',
+          desc:'Six classic Fabuloso scents for whole‑home shine and long‑lasting fragrance.',
+          items:['Lavender','Lemon','Apple','Ocean','Antibacterial','Baking Soda']
+        },
+        bundle8:{
+          title:'Restock & Refresh — Bundle 8', img:'cfa510ee039d4d388fa947eb848d65f3~tplv-omjb5zjo8w-origin-jpeg.jpeg',
+          desc:'Full restock essentials — shrink-wrapped to avoid leaks, name-brand items only.',
+          items:[
+            'Purex Liquid (x4, 150 oz)',
+            'Purex Crystals (15.5 oz)',
+            'Scott Paper Towels (2× 6-roll)',
+            'Scott Toilet Paper (12 Mega Rolls)',
+            'Lysol Spray (1) & Cleaner (1)',
+            'Lysol Wipes (32–35 ct)',
+            'Suavitel Dryer Sheets (20 ct)',
+            'BONUS: Toothbrushes + Crest Whitening Toothpaste',
+            'If pods unavailable: substitute or add bonus 4-pack of Scott TP'
+          ]
+        }
+      };
+      if(!window.PRODUCT_DETAILS){ window.PRODUCT_DETAILS = PRE_DETAILS; }
+      if(!window.openProductDetails){
+        window.openProductDetails = function(id){
+          try{
+            const data = (window.PRODUCT_DETAILS||{})[id];
+            const modal = document.getElementById('product-detail-modal');
+            if(!data || !modal){ console.warn('Missing details or modal for', id); return; }
+            const t = document.getElementById('pd-title');
+            const d = document.getElementById('pd-desc');
+            const i = document.getElementById('pd-image');
+            const ul = document.getElementById('pd-items');
+            if(t) t.textContent = data.title || '';
+            if(d) d.textContent = data.desc || '';
+            if(i){ i.src = data.img || ''; i.alt = data.title || 'Bundle'; }
+            if(ul){ ul.innerHTML = ''; (data.items||[]).forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul.appendChild(li); }); }
+            modal.style.display = 'block';
+          }catch(err){ console.warn('openProductDetails guard error', err); }
+        };
+      }
+    })();
+  </script>
 
   <main id="shop-section" class="max-w-3xl mx-auto px-4">
     <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b-2 border-pink-400 pb-2">Available Bundles</h2>
 
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center">
-      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6"><img src="purex-bundle.jpg" class="rounded-xl w-full border-2 border-blue-200" alt="Purex Value Fresh Bundle"/></div>
+    <!-- 1: Purex -->
+    <div class="product-card bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center" data-product-id="purex" data-price="62.50" data-name="Purex Value Fresh Bundle">
+      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+        <img src="purex-bundle.jpg" alt="Purex Value Fresh Bundle Image" class="rounded-xl w-full h-auto object-cover border-2 border-blue-200 cursor-pointer" onclick="openProductDetails('purex')" onerror="this.onerror=null; this.src='https://placehold.co/400x400/3b82f6/ffffff?text=Purex+Bundle'; this.classList.add('img-placeholder','h-40')" />
+      </div>
       <div class="w-full md:w-2/3">
-        <h3 class="text-2xl font-semibold mb-2">Purex Value Fresh Bundle</h3>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-800">Purex Value Fresh Bundle</h3>
         <p class="text-4xl font-extrabold text-red-600 mb-3">$62.50</p>
-        <p class="text-gray-600 mb-4">A smart, affordable cleaning bundle for homes that love value and results.</p>
-        <a class="btn bg-blue-600 text-white" href="#">Add to Cart</a>
+        <p class="text-gray-600 mb-4 text-base">A smart, affordable cleaning bundle for homes that love value and results. Purex brings reliable clean while bonus home essentials stretch your dollars further.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Budget-Smart</span>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Purex</span>
+        </div>
+        <div class="mb-3 flex items-center flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="subs-toggle"> <span class="font-medium">Subscribe & Save <span class="text-emerald-600 font-bold">5% off</span></span>
+          </label>
+          <select class="subs-months border rounded-lg px-2 py-1 text-sm">
+            <option value="1">1 month</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+          </select>
+        </div>
+        <button onclick="addToCart('purex', 62.50, 'Purex Value Fresh Bundle')" class="block text-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.01]">Add to Cart</button>
+        <button onclick="openProductDetails('purex')" class="mt-2 block text-center w-full md:w-auto bg-white border text-gray-800 font-semibold py-3 px-6 rounded-full shadow-lg">View Details</button>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center">
-      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6"><img src="tide-pods-scott.jpg" class="rounded-xl w-full border-2 border-blue-200" alt="Tide Pods"/></div>
+    <!-- 2: Tide Pods -->
+    <div class="product-card bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center" data-product-id="tide" data-price="62.00" data-name="Tide Ultimate Pods Bundle">
+      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+        <img src="tide-pods-scott.jpg" alt="Tide Ultimate Pods Bundle Image" class="rounded-xl w-full h-auto object-cover border-2 border-blue-200 cursor-pointer" onclick="openProductDetails('tide')" onerror="this.onerror=null; this.src='https://placehold.co/400x400/3b82f6/ffffff?text=Tide+Bundle'; this.classList.add('img-placeholder','h-40')" />
+      </div>
       <div class="w-full md:w-2/3">
-        <h3 class="text-2xl font-semibold mb-2">Tide Ultimate Pods Bundle</h3>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-800">Tide Ultimate Pods Bundle</h3>
         <p class="text-4xl font-extrabold text-red-600 mb-3">$62.00</p>
-        <p class="text-gray-600 mb-4">Tide doesn't play! Premium fresh‑pressed feel.</p>
-        <a class="btn bg-blue-600 text-white" href="#">Add to Cart</a>
+        <p class="text-gray-600 mb-4 text-base">Tide doesn't play! This premium bundle delivers that fresh-pressed luxury clean—perfect for busy families, athletes, and anyone who wants laundry that looks, smells, and feels brand new.</p>
+        <div class="mb-4">
+          <a href="https://photos.app.goo.gl/eQi6ysjfLVT1rZG48" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600 text-white text-sm font-semibold">
+            ▶ Watch 30s Tide Pods Commercial
+          </a>
+          <span class="ml-2 text-xs text-gray-500">Opens in your browser for smooth playback.</span>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Power Clean</span>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Tide</span>
+        </div>
+        <div class="mb-3 flex items-center flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="subs-toggle"> <span class="font-medium">Subscribe & Save <span class="text-emerald-600 font-bold">5% off</span></span>
+          </label>
+          <select class="subs-months border rounded-lg px-2 py-1 text-sm">
+            <option value="1">1 month</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+          </select>
+        </div>
+        <button onclick="addToCart('tide', 62.00, 'Tide Ultimate Pods Bundle')" class="block text-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.01]">Add to Cart</button>
+        <button onclick="openProductDetails('tide')" class="mt-2 block text-center w-full md:w-auto bg-white border text-gray-800 font-semibold py-3 px-6 rounded-full shadow-lg">View Details</button>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center">
-      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6"><img src="tide-yellow.jpg" class="rounded-xl w-full border-2 border-blue-200" alt="Tide + Scott Combo"/></div>
+    <!-- 3: Tide + Scott -->
+    <div class="product-card bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center" data-product-id="tide-scott" data-price="65.00" data-name="Tide + Scott Mega Household Combo">
+      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+        <img src="tide-yellow.jpg" alt="Tide and Scott Household Combo Image" class="rounded-xl w-full h-auto object-cover border-2 border-blue-200 cursor-pointer" onclick="openProductDetails('tide-scott')" onerror="this.onerror=null; this.src='https://placehold.co/400x400/3b82f6/ffffff?text=Tide+Scott+Mega'; this.classList.add('img-placeholder','h-40')" />
+      </div>
       <div class="w-full md:w-2/3">
-        <h3 class="text-2xl font-semibold mb-2">Tide + Scott Mega Household Combo</h3>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-800">Tide + Scott Mega Household Combo</h3>
         <p class="text-4xl font-extrabold text-red-600 mb-3">$65.00</p>
-        <p class="text-gray-600 mb-4">Laundry + paper goods in one big box.</p>
-        <a class="btn bg-blue-600 text-white" href="#">Add to Cart</a>
+        <p class="text-gray-600 mb-4 text-base">A mega household essentials box featuring the Tide clean you love plus Scott paper goods for real-life, everyday home needs. Covers laundry, kitchen, and bathroom.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Household</span>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Paper Goods</span>
+        </div>
+        <div class="mb-3 flex items-center flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="subs-toggle"> <span class="font-medium">Subscribe & Save <span class="text-emerald-600 font-bold">5% off</span></span>
+          </label>
+          <select class="subs-months border rounded-lg px-2 py-1 text-sm">
+            <option value="1">1 month</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+          </select>
+        </div>
+        <button onclick="addToCart('tide-scott', 65.00, 'Tide + Scott Mega Household Combo')" class="block text-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.01]">Add to Cart</button>
+        <button onclick="openProductDetails('tide-scott')" class="mt-2 block text-center w-full md:w-auto bg-white border text-gray-800 font-semibold py-3 px-6 rounded-full shadow-lg">View Details</button>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center">
-      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6"><img src="bundle8-restock.jpg" class="rounded-xl w-full border-2 border-blue-200" alt="Bundle 8"/></div>
+    <!-- 4: Restock & Refresh (Bundle 8) -->
+    <div class="product-card bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center"
+         data-product-id="bundle8" data-price="80.00" data-name="Restock & Refresh — Bundle 8">
+      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+        <img src="cfa510ee039d4d388fa947eb848d65f3~tplv-omjb5zjo8w-origin-jpeg.jpeg"
+             alt="Restock & Refresh Bundle 8"
+             class="rounded-xl w-full h-auto object-cover border-2 border-blue-200 cursor-pointer"
+             onclick="openProductDetails('bundle8')"
+             onerror="this.onerror=null; this.src='https://placehold.co/400x400/3b82f6/ffffff?text=Bundle+8'; this.classList.add('img-placeholder','h-40')" />
+      </div>
       <div class="w-full md:w-2/3">
-        <h3 class="text-2xl font-semibold mb-2">Restock & Refresh — Bundle 8</h3>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-800">Restock & Refresh — Bundle 8</h3>
         <p class="text-4xl font-extrabold text-red-600 mb-3">$80.00</p>
-        <p class="text-gray-600 mb-4">A full restock in one bundle — because we shop, so you don’t have to.</p>
-        <a class="btn bg-blue-600 text-white" href="#">Add to Cart</a>
+        <p class="text-gray-600 mb-4 text-base">A full restock in one bundle — because we shop, so you don’t have to. Trusted name-brand items only.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Household</span>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Restock</span>
+        </div>
+        <div class="mb-3 flex items-center flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="subs-toggle"> <span class="font-medium">Subscribe & Save <span class="text-emerald-600 font-bold">5% off</span></span>
+          </label>
+          <select class="subs-months border rounded-lg px-2 py-1 text-sm">
+            <option value="1">1 month</option><option value="3">3 months</option><option value="6">6 months</option>
+          </select>
+        </div>
+        <button onclick="addToCart('bundle8', 80.00, 'Restock & Refresh — Bundle 8')"
+                class="block text-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.01]">
+          Add to Cart
+        </button>
+        <button onclick="openProductDetails('bundle8')"
+                class="mt-2 block text-center w-full md:w-auto bg-white border text-gray-800 font-semibold py-3 px-6 rounded-full shadow-lg">
+          View Details
+        </button>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl p-4 md:p-6 mb-10 shadow-soft flex flex-col md:flex-row items-center">
-      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6"><img src="fabuloso-bundle.jpg" class="rounded-xl w-full border-2 border-blue-200" alt="Fabuloso Pack"/></div>
+    <!-- 5: Fabuloso Six-Scent -->
+    <div class="product-card bg-white rounded-2xl p-4 md:p-6 mb-6 shadow-soft flex flex-col md:flex-row items-center" data-product-id="fabuloso" data-price="42.00" data-name="Fabuloso Six-Scent Mop & Glow Pack">
+      <div class="w-full md:w-1/3 mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+        <img src="fabuloso-six.jpg" alt="Fabuloso Six-Scent Pack" class="rounded-xl w-full h-auto object-cover border-2 border-blue-200 cursor-pointer" onclick="openProductDetails('fabuloso')" onerror="this.onerror=null; this.src='https://placehold.co/400x400/8b5cf6/ffffff?text=Fabuloso+Pack'; this.classList.add('img-placeholder','h-40')" />
+      </div>
       <div class="w-full md:w-2/3">
-        <h3 class="text-2xl font-semibold mb-2">Fabuloso Six-Scent — Mop & Glow Pack</h3>
+        <h3 class="text-2xl font-semibold mb-2 text-gray-800">Fabuloso Six-Scent — Mop & Glow Pack</h3>
         <p class="text-4xl font-extrabold text-red-600 mb-3">$42.00</p>
-        <p class="text-gray-600 mb-4">Six classic Fabuloso scents for whole‑home shine and fragrance.</p>
-        <a class="btn bg-blue-600 text-white" href="#">Add to Cart</a>
+        <p class="text-gray-600 mb-4 text-base">Multi‑surface shine with crowd‑favorite scents: Lavender, Lemon, Apple, Ocean, Antibacterial, and Baking Soda. Perfect for kitchens, bathrooms, and quick refresh cleanups.</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Floor Care</span>
+          <span class="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">Long‑Lasting Scent</span>
+        </div>
+        <div class="mb-3 flex items-center flex-wrap gap-3">
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" class="subs-toggle"> <span class="font-medium">Subscribe & Save <span class="text-emerald-600 font-bold">5% off</span></span>
+          </label>
+          <select class="subs-months border rounded-lg px-2 py-1 text-sm">
+            <option value="1">1 month</option>
+            <option value="3">3 months</option>
+            <option value="6">6 months</option>
+          </select>
+        </div>
+        <button onclick="addToCart('fabuloso', 42.00, 'Fabuloso Six-Scent Mop & Glow Pack')" class="block text-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-150 transform hover:scale-[1.01]">Add to Cart</button>
+        <button onclick="openProductDetails('fabuloso')" class="mt-2 block text-center w-full md:w-auto bg-white border text-gray-800 font-semibold py-3 px-6 rounded-full shadow-lg">View Details</button>
       </div>
     </div>
-  </main>
 
-  <footer class="text-center text-sm text-gray-500 py-8">&copy; 2025 BuyFelishasBundles — Where Freshness Meets Favor 💜</footer>
-</body>
+    <!-- Order History -->
+    <h2 class="text-3xl font-bold mb-6 mt-12 text-gray-800 border-b-2 border-green-400 pb-2">Your Order History</h2>
+    <div id="order-history-list" class="space-y-4">
+      <p id="history-loading-text" class="text-center text-gray-500 py-6">Loading past orders...</p>
+    </div>
+
+    <!-- Subscribe & Save Section (explanation) -->
+    <section id="subscribe-section" class="mt-10 mb-6">
+      <h2 class="text-2xl font-bold text-emerald-700 mb-2">Subscribe & Save 5%</h2>
+      <p class="text-gray-600 mb-3 text-sm">Turn on <span class="font-semibold">Subscribe & Save</span> on any bundle above and choose 1, 3, or 6 months. You’ll get <span class="text-emerald-700 font-bold">5% off the product</span> and shipping will be scheduled each month you select. Totals will reflect <em>(product × months with 5% off)</em> + <em>($12 shipping × months × quantity)</em>.</p>
+      <div class="text-xs text-gray-500">You can also create a formal membership below to save and export your monthly ship dates.</div>
+    </section>
+
+    <!-- Memberships Center -->
+    <section id="memberships-center" class="max-w-3xl mx-auto px-4 mt-10">
+      <div class="bg-white border rounded-2xl shadow-soft p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xl font-bold text-emerald-700">Memberships — Subscribe & Save 5%</h3>
+          <div class="flex items-center gap-2">
+            <button id="new-membership-btn" class="px-3 py-2 rounded bg-emerald-600 text-white text-sm">Create Membership</button>
+            <button id="see-upcoming-btn" class="px-3 py-2 rounded bg-indigo-600 text-white text-sm">Upcoming Ship Dates</button>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mb-3">Prepay for 1, 3, or 6 months. You save <strong>5% on the product</strong> each month. Shipping is <strong>$12</strong> per shipment. Choose a start date; we'll generate monthly ship dates and gentle reminders.</p>
+        <div id="memberships-list" class="divide-y"></div>
+      </div>
+    </section>
+
+    <!-- Create Membership Modal -->
+    <div id="membership-modal" class="modal">
+      <div class="modal-content max-w-xl">
+        <span class="close-btn" onclick="document.getElementById('membership-modal').style.display='none'">&times;</span>
+        <h3 class="text-2xl font-bold mb-3">Start a Membership</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <label class="text-sm">Product
+            <select id="m-prod" clas
+
+  <!-- Reviews Section (appended) -->
+  <section id="reviews" class="max-w-3xl mx-auto px-4 mt-12 mb-10">
+    <h2 class="text-3xl font-bold mb-4 text-gray-800 border-b-2 border-yellow-400 pb-2">What Customers Are Saying</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Tasha</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Everything smelled amazing and was packed beautifully!</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Dee</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">I’m obsessed with these bundles. Fast shipping & great value!</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Marcus</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">That Tide clean hits different. Clothes feel brand new.</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Joy</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Purex bundle saved my week & my wallet. Will reorder!</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Andre</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Everything was shrink‑wrapped tight. No leaks. A++</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Keisha</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Loved the surprise extras—felt so cared for.</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Renee</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Checkout was easy and shipping updates came quick.</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Luis</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">The Fabuloso pack has my place smelling like a hotel lobby.</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Kia</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Customer service was so kind. Highly recommend.</p></article>
+      <article class="bg-white rounded-2xl p-4 shadow-soft border" itemprop="review" itemscope itemtype="https://schema.org/Review"><div class="flex items-center justify-between mb-1"><h3 class="font-semibold" itemprop="author">Mo</h3><div class="text-yellow-500">★★★★★</div></div><p class="text-gray-600" itemprop="reviewBody">Bundle 8 restocked my house in one box—no store run.</p></article>
+    </div>
+  </section>
+
+  <!-- As Seen on TikTok Strip (appended) -->
+  <section class="bg-black text-white">
+    <div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
+      <div class="text-sm font-semibold">As seen on TikTok — <span class="opacity-80">@buyfelishasbundles</span></div>
+      <a href="https://www.tiktok.com/@buyfelishasbundles" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-white text-black text-xs font-bold">Visit Profile</a>
+    </div>
+  </section>
+
 </html>
